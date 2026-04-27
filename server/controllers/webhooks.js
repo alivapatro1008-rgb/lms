@@ -62,6 +62,11 @@ const stripeInstace = new Stripe(process.env.STRIPE_SECRET_KEY)
 export const stripeWebhooks = async (request, response) => {
     const sig = request.headers['stripe-signature'];
 
+    console.log("RAW BODY TYPE:", typeof request.body);
+    console.log("IS BUFFER:", Buffer.isBuffer(request.body));
+    console.log("HEADERS:", request.headers['content-type']);
+
+
     let event;
 
     try {

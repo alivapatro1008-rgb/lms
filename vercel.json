@@ -1,8 +1,7 @@
 {
   "functions": {
     "api/index.js": {
-      "maxDuration": 10,
-      "bodyParser": false
+      "maxDuration": 10
     }
   },
   "routes": [

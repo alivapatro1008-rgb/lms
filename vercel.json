@@ -1,0 +1,8 @@
+{
+  "routes": [
+    {
+      "src": "/stripe",
+      "dest": "/api/index.js"
+    }
+  ]
+}

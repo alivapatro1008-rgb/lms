@@ -9,6 +9,8 @@ import connectCloudinary from '../server/configs/cloudinary.js'
 import courseRouter from '../server/routes/courseRoute.js'
 import userRouter from '../server/routes/userRoutes.js'
 
+console.log("FORCE DEPLOY");
+
 // Initialize Express
 const app = express()
 

@@ -1,4 +1,11 @@
 {
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 10,
+      "bodyParser": false
+    }
+  },
   "routes": [
     {
       "src": "/stripe",

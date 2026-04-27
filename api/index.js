@@ -1,48 +1,38 @@
-import express from 'express'
-import cors from 'cors'
-import 'dotenv/config'
-import connectDB from '../server/configs/mongodb.js'
-import { clerkWebhooks, stripeWebhooks } from '../server/controllers/webhooks.js'
-import educatorRouter from '../server/routes/educatorRoutes.js'
-import { clerkMiddleware } from '@clerk/express'
-import connectCloudinary from '../server/configs/cloudinary.js'
-import courseRouter from '../server/routes/courseRoute.js'
-import userRouter from '../server/routes/userRoutes.js'
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
 
-console.log("FORCE DEPLOY");
+import connectDB from "../server/configs/mongodb.js";
+import connectCloudinary from "../server/configs/cloudinary.js";
 
-// Initialize Express
-const app = express()
+import { clerkWebhooks, stripeWebhooks } from "../server/controllers/webhooks.js";
+import educatorRouter from "../server/routes/educatorRoutes.js";
+import courseRouter from "../server/routes/courseRoute.js";
+import userRouter from "../server/routes/userRoutes.js";
 
-// 🔥 Ensure DB connects only once (important for serverless)
-let isConnected = false
-const connectOnce = async () => {
-  if (!isConnected) {
-    await connectDB()
-    await connectCloudinary()
-    isConnected = true
-  }
-}
+import { clerkMiddleware } from "@clerk/express";
 
-// 🔥 STRIPE WEBHOOK (MUST BE FIRST & RAW)
-app.post('/stripe', express.raw({ type: '*/*' }), async (req, res) => {
-  await connectOnce()
-  return stripeWebhooks(req, res)
-})
+const app = express();
 
-// Middlewares
-app.use(cors())
-app.use(clerkMiddleware())
-app.use(express.json())
+// Connect DB
+await connectDB();
+await connectCloudinary();
+
+// 🔥 Stripe route (RAW BODY)
+app.post("/stripe", express.raw({ type: "*/*" }), stripeWebhooks);
+
+// Normal middlewares
+app.use(cors());
+app.use(clerkMiddleware());
 
 // Routes
-app.get('/', (req, res) => res.send("API Working"))
+app.get("/", (req, res) => res.send("API Working"));
+app.post("/clerk", express.json(), clerkWebhooks);
 
-app.post('/clerk', clerkWebhooks)
-app.use('/api/educator', educatorRouter)
-app.use('/api/course', courseRouter)
-app.use('/api/user', userRouter)
+app.use("/api/educator", express.json(), educatorRouter);
+app.use("/api/course", express.json(), courseRouter);
+app.use("/api/user", express.json(), userRouter);
 
 // ❌ NO app.listen()
-// ✅ Export for Vercel
-export default app
+
+export default app;
